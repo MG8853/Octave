@@ -24,15 +24,15 @@ class SettingsPredicate : BiPredicate<CommandExecutor, Context> {
 
         return when {
             options.disabledUsers.contains(context.user.id) -> {
-                context.send().error("You are not allowed to use this ${type(options.inheritUsers())}.").queue()
+                context.send().error("あなたは ${type(options.inheritUsers())} を使用することはできません。").queue()
                 false
             }
             options.disabledRoles.isNotEmpty() && options.disabledRoles.containsAll(context.member.roles.map(Role::getId)) -> {
-                context.send().error("Your roles are not allowed to use this ${type(options.inheritRoles())}.").queue()
+                context.send().error("あなたの権限では ${type(options.inheritRoles())} を使用できません。").queue()
                 false
             }
             options.disabledChannels.contains(context.textChannel.id) -> {
-                context.send().error("You can not use this ${type(options.inheritChannels())} in this channel.").queue()
+                context.send().error("あなたはこのチャンネルでは、 ${type(options.inheritChannels())} を使用できません。").queue()
                 false
             }
             else -> true

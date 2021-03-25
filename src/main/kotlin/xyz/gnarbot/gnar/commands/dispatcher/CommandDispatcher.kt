@@ -25,7 +25,7 @@ class CommandDispatcher(private val bot: Bot, private val commandRegistry: Comma
             VoiceStatePredicate() // voice state checking
     )
 
-    private val permissionToEmbed = "The bot needs the `${Permission.MESSAGE_EMBED_LINKS.getName()}` permission in this channel to show messages."
+    private val permissionToEmbed = "ボットがメッセージを送るには、このチャンネルで `${Permission.MESSAGE_EMBED_LINKS.getName()}` 権限が必要です。"
 
     fun handle(context: Context) {
         // Don't do anything if the bot can't even speak.
@@ -95,7 +95,7 @@ class CommandDispatcher(private val bot: Bot, private val commandRegistry: Comma
             context.bot.datadog.incrementCounter("bot.commands_ran")
             return true
         } catch (e: PermissionException) {
-            context.send().error("The bot lacks the permission `${e.permission.getName()}` required to perform this command.").queue()
+            context.send().error("ボットには、このコマンドを実行するための `${e.permission.getName()}` 権限がありません。").queue()
         } catch (e: MusicLimitException) {
             e.sendToContext(context)
         } catch (e: Exception) {

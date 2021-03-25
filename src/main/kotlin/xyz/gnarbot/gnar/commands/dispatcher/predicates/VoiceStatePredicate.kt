@@ -11,10 +11,10 @@ class VoiceStatePredicate : BiPredicate<CommandExecutor, Context> {
         if (cmd.botInfo.scope != Scope.VOICE) return true
 
         if (context.member.voiceState?.channel == null) {
-            context.send().error("\uD83C\uDFB6 Music commands requires you to be in a voice channel.").queue()
+            context.send().error("\uD83C\uDFB6 ミュージックコマンドは、音声チャンネルに入っている必要があります。").queue()
             return false
         } else if (context.member.voiceState?.channel == context.guild.afkChannel) {
-            context.send().error("Music can't be played in the AFK channel.").queue()
+            context.send().error("AFKチャンネルではミュージックを再生することはできません。").queue()
             return false
         } else if (context.data.music.channels.isNotEmpty()
                 && context.member.voiceState?.channel?.id !in context.data.music.channels) {
@@ -23,7 +23,7 @@ class VoiceStatePredicate : BiPredicate<CommandExecutor, Context> {
                     .mapNotNull(context.guild::getVoiceChannelById)
                     .map(VoiceChannel::getName)
 
-            context.send().error("Music can only be played in: `$channels`, since this server has set it/them as a designated voice channel.").queue()
+            context.send().error("このサーバーでは、ミュージックを指定された音声チャンネルのみ再生できるように設定しているため、ミュージックは `$channels` でのみ再生できます。").queue()
             return false
         }
 

@@ -43,7 +43,7 @@ class BotInfoCommand : CommandExecutor() {
 
         context.send().embed("Bot Information") {
             thumbnail { context.jda.selfUser.avatarUrl }
-            desc { "Never miss a beat with Octave, a simple and easy to use Discord music bot delivering high quality audio to hundreds of thousands of servers. We support Youtube, Soundcloud, and more!" }
+            desc { "シンプルで使いやすいDiscordミュージックボットであるMGBOTは、サーバーに高品質な低音と高音のバランスの取れたオーディオを配信します。 YoutubeやSoundcloudなど他多数をサポートしています！" }
 
             field("CPU Usage", true) { "${procCpuUsage}% JVM\n${sysCpuUsage}% SYS" }
             field("RAM Usage", true) { "$ramUsedFormatted${ramUsedCalculated.unit} (${ramUsedPercent}%)" }

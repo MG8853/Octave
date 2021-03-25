@@ -3,7 +3,7 @@ package xyz.gnarbot.gnar.music
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
-import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioTrack
+import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioTrack
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 import com.sedmelluq.discord.lavaplayer.track.AudioItem

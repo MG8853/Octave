@@ -31,48 +31,49 @@ class PermissionPredicate : BiPredicate<CommandExecutor, Context> {
         }
 
         context.send().error(buildString {
-            append("This command requires ")
+            append("このコマンドには ")
 
             val permissionNotEmpty = cmd.botInfo.permissions.isNotEmpty()
 
             if(cmd.botInfo.djLock && context.data.command.djRole != null) {
-                append("a role named ")
                 append(context.guild.getRoleById(context.data.command.djRole!!)?.name)
+                append(" 権限が必要")
             } else if (cmd.botInfo.djLock && context.data.command.djRole == null) {
-                append("a role named DJ")
+                append("DJ 権限が必要")
             }
 
             if (cmd.botInfo.roleRequirement.isNotEmpty()) {
-                append("a role named")
                 append(cmd.botInfo.roleRequirement)
+                append(" 権限が必要")
 
                 if (permissionNotEmpty) {
-                    append(" and ")
+                    append(" ＋ ")
                 }
             }
 
             if (permissionNotEmpty) {
-                append("the permissions `")
-                append(cmd.botInfo.permissions.map(Permission::getName))
-                append("` in ")
+                append("`")
 
                 when (cmd.botInfo.scope) {
                     Scope.GUILD -> {
-                        append("the guild `")
                         append(context.guild.name)
+                        append("サーバー` の `")
                     }
                     Scope.TEXT -> {
-                        append("the text channel `")
                         append(context.textChannel.name)
+                        append("` に `")
+
                     }
                     Scope.VOICE -> {
-                        append("the voice channel `")
                         append(context.voiceChannel.name)
+                        append("` に `")
                     }
                 }
+                append(cmd.botInfo.permissions.map(Permission::getName))
+                append("`権限が必要")
             }
 
-            append(".")
+            append("です。")
         }).queue()
         return false
     }
