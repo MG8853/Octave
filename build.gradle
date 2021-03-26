@@ -8,7 +8,7 @@ plugins {
 
 archivesBaseName = 'Octave'
 group 'xyz.gnarbot'
-version '6.1.2'
+version '6.1.3'
 
 mainClassName = 'xyz.gnarbot.gnar.Bot'
 
