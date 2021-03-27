@@ -30,11 +30,11 @@ public class CommandRegistry {
         register(new HelpCommand());
         register(new InviteBotCommand());
         register(new PingCommand());
-        register(new SupportCommand());
-        register(new VoteCommand());
+//        register(new SupportCommand());
+//        register(new VoteCommand());
         register(new BotInfoCommand());
-        register(new DonateCommand());
-        register(new RedeemCommand());
+//        register(new DonateCommand());
+//        register(new RedeemCommand());
         //End General Commands
 
         //Mod Commands
@@ -81,7 +81,7 @@ public class CommandRegistry {
         register(new YoutubeCommand());
         register(new SoundcloudCommand());
 
-        register(new PatronCommand());
+//        register(new PatronCommand());
     }
 
     public Map<String, CommandExecutor> getCommandMap() {

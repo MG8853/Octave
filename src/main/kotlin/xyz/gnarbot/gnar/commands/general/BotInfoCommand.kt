@@ -1,5 +1,7 @@
 package xyz.gnarbot.gnar.commands.general
 
+import com.github.natanbc.lavadsp.DspInfo
+import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary
 import com.sun.management.OperatingSystemMXBean
 import net.dv8tion.jda.api.JDAInfo
 import xyz.gnarbot.gnar.commands.BotInfo
@@ -12,7 +14,7 @@ import java.text.DecimalFormat
 
 @Command(
         aliases = ["about", "info", "botinfo", "stats"],
-        description = "Show information about the context.bot."
+        description = "ボットに関する情報を表示します。"
 )
 @BotInfo(
         id = 42
@@ -54,11 +56,11 @@ class BotInfoCommand : CommandExecutor() {
             field("Cached Users", true) { users }
             field("Uptime", true) { "${d}d ${h % 24}h ${m % 60}m ${s % 60}s" }
 
-            field("General", true) {
+            field("Resources", true) {
                 buildString {
-                    append("Premium: **[Patreon](https://www.patreon.com/octavebot)**\n")
-                    append("Commands: **$commandSize**\n")
-                    append("Library: **[JDA ${JDAInfo.VERSION}](${JDAInfo.GITHUB})**\n")
+                    append("**[JDA ${JDAInfo.VERSION}](${JDAInfo.GITHUB})** | ")
+                    append("**[Lavaplayer ${PlayerLibrary.VERSION}](https://github.com/sedmelluq/lavaplayer)** | ")
+                    append("**[LavaDSP ${DspInfo.VERSION}](https://github.com/natanbc/lavadsp)**")
                 }
             }
 

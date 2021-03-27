@@ -7,7 +7,7 @@ import xyz.gnarbot.gnar.commands.Context
 
 @Command(
         aliases = ["ping"],
-        description = "Show the bot's current response time."
+        description = "ボットの現在の応答時間を表示します。"
 )
 @BotInfo(id = 18)
 class PingCommand : CommandExecutor() {

@@ -6,7 +6,7 @@ import xyz.gnarbot.gnar.commands.*
 @Command(
         aliases = ["help", "guide"],
         usage = "[command]",
-        description = "Display the bot's list of commands."
+        description = "ボットのコマンドリストを表示します。"
 )
 @BotInfo(
         id = 44
@@ -51,7 +51,7 @@ class HelpCommand : CommandExecutor() {
                     field("Aliases") { cmd.info.aliases.joinToString(separator = ", ") }
                     field("Usage") { "_${cmd.info.aliases[0].toLowerCase()} ${cmd.info.usage}" }
                     if (cmd.botInfo.donor) {
-                        field("Donator") { "This command is exclusive to premium guilds. Become a patron to access them." }
+                        field("MGSV") { "このコマンドはプレミアムギルド専用です。" }
                     }
 
                     if (cmd.botInfo.permissions.isNotEmpty()) {
@@ -63,7 +63,7 @@ class HelpCommand : CommandExecutor() {
                 return
             }
 
-            context.send().error("There is no command or category named `$target`. :cry:").queue()
+            context.send().error("`$target`という名前のコマンドやカテゴリはありません。 :cry:").queue()
             return
         }
 
@@ -72,8 +72,8 @@ class HelpCommand : CommandExecutor() {
         context.send().embed("Bot Commands") {
             desc {
                 buildString {
-                    append("The prefix of the bot on this server is `").append(context.data.command.prefix
-                            ?: context.bot.configuration.prefix).append("`\n")
+                    append("このサーバー上のボットの操作には `").append(context.data.command.prefix
+                            ?: context.bot.configuration.prefix).append("` をコマンドの最初につけてください。\n")
                 }
             }
 
@@ -88,7 +88,7 @@ class HelpCommand : CommandExecutor() {
                 }
             }
 
-            footer { "For more information try _help (command) or _help (category), ex: _help bassboost or _help play" }
+            footer { "詳細については、%help（コマンド）または %help（カテゴリ）を試してください。\n 例：%help Music または %help play" }
         }.action().queue()
     }
 }

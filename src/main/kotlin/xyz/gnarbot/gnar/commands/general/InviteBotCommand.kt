@@ -8,15 +8,15 @@ import xyz.gnarbot.gnar.commands.Context
 
 @Command(
         aliases = ["invite", "invitebot"],
-        description = "Get a link to invite the bot to your server."
+        description = "ボットをサーバーに招待するためのリンクを作成します。"
 )
 @BotInfo(id = 17)
 class InviteBotCommand : CommandExecutor() {
     override fun execute(context: Context, label: String, args: Array<String>) {
         val link = context.jda.getInviteUrl(Permission.ADMINISTRATOR)
         context.send().embed {
-            title { "Get Octave on your server!" }
-            description { "__**[Click to invite Octave to your server.]($link)**__" }
+            title { "ボットをあなたのサーバーに招待しましょう！" }
+            description { "__**[ここをクリック！]($link)**__" }
         }.action().queue()
     }
 }
