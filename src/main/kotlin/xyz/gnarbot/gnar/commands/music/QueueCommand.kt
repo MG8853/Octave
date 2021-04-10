@@ -8,7 +8,7 @@ import xyz.gnarbot.gnar.utils.Utils
 
 @Command(
         aliases = ["queue", "list", "q"],
-        description = "Shows the music that's currently queued."
+        description = "再生予定の曲を表示します。"
 )
 @BotInfo(
         id = 69,
@@ -18,7 +18,7 @@ class QueueCommand : CommandExecutor() {
     override fun execute(context: Context, label: String, args: Array<String>) {
         val manager = context.bot.players.getExisting(context.guild)
         if (manager == null) {
-            context.send().error("There's no music player in this guild.\n$PLAY_MESSAGE").queue()
+            context.send().error("音声チャンネルがありません。\n$PLAY_MESSAGE").queue()
             return
         }
 
@@ -29,7 +29,7 @@ class QueueCommand : CommandExecutor() {
             setUser(context.user)
             title { "Music Queue" }
             color { context.selfMember.color }
-            empty { "**Empty queue.** Add some music with `${config.prefix}play url|YT search`." }
+            empty { "**Empty queue.** 再生予定の曲はありません。`${config.prefix}play url|YT search` を使用して曲を追加してください。" }
             finally { message -> message!!.delete().queue() }
 
             for (track in queue) {
@@ -66,11 +66,11 @@ class QueueCommand : CommandExecutor() {
                 field("Radio") {
                     val member = context.guild.getMemberById(it.requester)
                     buildString {
-                        append("Currently streaming music from radio station `${it.station.capitalize()}`")
+                        append("現在、`${it.station.capitalize()}` から音楽をストリーミング再生しています。")
                         member?.let {
                             append(", requested by ${member.asMention}")
                         }
-                        append(". When the queue is empty, random tracks from the station will be added.")
+                        append(". 再生予定の曲がなくなると、ステーションからのランダムなトラックが追加されます。")
                     }
                 }
             }

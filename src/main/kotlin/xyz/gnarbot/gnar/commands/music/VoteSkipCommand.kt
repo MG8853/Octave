@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 @Command(
         aliases = ["voteskip"],
-        description = "Vote to skip the current music track."
+        description = "投票によるスキップをします。"
 )
 @BotInfo(
         id = 75,
@@ -19,11 +19,11 @@ import java.util.concurrent.TimeUnit
 class VoteSkipCommand : MusicCommandExecutor(true, true, true) {
     override fun execute(context: Context, label: String, args: Array<String>, manager: MusicManager) {
         if (context.member.voiceState!!.isDeafened) {
-            context.send().issue("You actually have to be listening to the song to start a vote.").queue()
+            context.send().issue("投票を開始するには、実際に曲を聴いている必要があります。").queue()
             return
         }
         if (manager.isVotingToSkip) {
-            context.send().issue("There is already a vote going on!").queue()
+            context.send().issue("すでに投票が行われています！").queue()
             return
         }
 
@@ -40,7 +40,7 @@ class VoteSkipCommand : MusicCommandExecutor(true, true, true) {
         }
 
         if (System.currentTimeMillis() - manager.lastVoteTime < voteSkipCooldown) {
-            context.send().issue("You must wait $voteSkipCooldownText before starting a new vote.").queue()
+            context.send().issue("新しく投票を始めるには $voteSkipCooldown 待つ必要があります。").queue()
             return
         }
 
@@ -61,7 +61,7 @@ class VoteSkipCommand : MusicCommandExecutor(true, true, true) {
         }
 
         if (manager.player.playingTrack.duration - manager.player.playingTrack.position <= voteSkipDuration) {
-            context.send().issue("By the time the vote finishes in $voteSkipDurationText, the song will be over.").queue()
+            context.send().issue("$voteSkipDurationText で投票が終了する前に今流れている曲の再生が終わります。").queue()
             return
         }
 
@@ -73,10 +73,9 @@ class VoteSkipCommand : MusicCommandExecutor(true, true, true) {
             desc {
                 buildString {
                     append(context.message.author.asMention)
-                    append(" has voted to **skip** the current track!")
-                    append(" React with :thumbsup:\n")
-                    append("If at least **${halfPeople + 1}** vote(s) from listeners are obtained " +
-                        "within **$voteSkipDurationText**, the song will be skipped!")
+                    append(" が投票しました。")
+                    append(" :thumbsup: に票を入れてください。\n")
+                    append(" **$voteSkipDurationText** にて少なくとも **${halfPeople + 1}** の投票がされた場合、曲はスキップされます。")
                 }
             }
         }.action()
@@ -89,7 +88,7 @@ class VoteSkipCommand : MusicCommandExecutor(true, true, true) {
             .thenCompose {
                 it.editMessage(EmbedBuilder(it.embeds[0])
                     .apply {
-                        desc { "Voting has ended! Check the newer messages for results." }
+                        desc { "投票は終了しました！ 新しいメッセージで結果を確認してください。" }
                         clearFields()
                     }.build()
                 ).submitAfter(voteSkipDuration, TimeUnit.MILLISECONDS)
@@ -100,10 +99,10 @@ class VoteSkipCommand : MusicCommandExecutor(true, true, true) {
                     desc {
                         buildString {
                             if (skip > halfPeople) {
-                                appendln("The vote has passed! The song has been skipped.")
+                                appendln("投票が完了しました。曲は後ほど再生されます。")
                                 manager.scheduler.nextTrack()
                             } else {
-                                appendln("The vote has failed! The song will stay.")
+                                appendln("投票は失敗に終わりました。")
                             }
                         }
                     }

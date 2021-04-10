@@ -11,7 +11,7 @@ import java.awt.Color
 @Command(
         aliases = ["youtube", "yt"],
         usage = "(query...)",
-        description = "Search and see YouTube results."
+        description = "YouTubeにて曲を探します。"
 )
 @BotInfo(
         id = 64,
@@ -21,12 +21,12 @@ import java.awt.Color
 class YoutubeCommand : xyz.gnarbot.gnar.commands.CommandExecutor() {
     override fun execute(context: Context, label: String, args: Array<String>) {
         if (!context.bot.configuration.searchEnabled) {
-            context.send().issue("Search is currently disabled. Try direct links instead.").queue()
+            context.send().issue("現在、検索を利用することはできません。").queue()
             return
         }
 
         if (args.isEmpty()) {
-            context.send().issue("Input a query to search YouTube.").queue()
+            context.send().issue("Youtubeにて直接コマンドから検索します。").queue()
             return
         }
 
@@ -34,7 +34,7 @@ class YoutubeCommand : xyz.gnarbot.gnar.commands.CommandExecutor() {
 
         context.bot.players.get(context.guild).search("ytsearch:$query", 5) { results ->
             if (results.isEmpty()) {
-                context.send().issue("No search results for `$query`.").queue()
+                context.send().issue("`$query` は見つかりませんでした。").queue()
                 return@search
             }
 
@@ -62,13 +62,13 @@ class YoutubeCommand : xyz.gnarbot.gnar.commands.CommandExecutor() {
                         }
                     }
 
-                    setFooter("Want to play one of these music tracks? Join a voice channel and reenter this command.", null)
+                    setFooter("音声チャンネルに参加しながらこのコマンドをもう一回送信すると再生を開始することもできます。", null)
                 }.action().queue()
                 return@search
             } else {
                 context.bot.eventWaiter.selector {
                     title { "YouTube Results" }
-                    desc { "Select one of the following options to play them in your current music channel." }
+                    desc { "次のオプションのいずれかを選択して、現在の音声チャンネルにて再生を開始します。" }
                     color { Color(141, 20, 0) }
 
                     setUser(context.user)
@@ -89,7 +89,7 @@ class YoutubeCommand : xyz.gnarbot.gnar.commands.CommandExecutor() {
                                     PlayCommand.play(context, args, true, result.info.uri)
                                 }
                             } else {
-                                context.send().issue("You're not in a voice channel anymore!").queue()
+                                context.send().issue("あなたは音声チャンネルに参加していません。").queue()
                             }
                         }
                     }

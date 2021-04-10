@@ -7,7 +7,7 @@ import xyz.gnarbot.gnar.music.MusicManager
 
 @Command(
         aliases = ["bass", "bassboost", "bb"],
-        description = "Boost the bass of the music"
+        description = "音楽の低音ブースト設定(beta)"
 )
 @BotInfo(
         id = 85,
@@ -36,13 +36,13 @@ class BassBoostedCommand : MusicCommandExecutor(true, true, true) {
             "hard" -> manager.dspFilter.bassBoost = BoostSetting.HARD
             "extreme" -> manager.dspFilter.bassBoost = BoostSetting.EXTREME
             "earrape" -> manager.dspFilter.bassBoost = BoostSetting.EARRAPE
-            else -> return context.send().issue("$query is not an option.").queue()
+            else -> return context.send().issue("$query はありません。").queue()
         }
 
         context.send().embed {
             title { "Bass Boost" }
             field("Bass Boost", false) {
-                "Bass Boost has been set to: $query"
+                "低音ブーストを設定しました: $query"
             }
         }.action().queue()
     }

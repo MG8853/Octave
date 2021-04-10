@@ -6,7 +6,7 @@ import xyz.gnarbot.gnar.music.MusicManager
 
 @Command(
     aliases = ["skipto", "skt"],
-    description = "Skip the current music track."
+    description = "特定の曲をスキップします。"
 )
 @BotInfo(
     id = 69420,
@@ -17,10 +17,10 @@ import xyz.gnarbot.gnar.music.MusicManager
 class SkipToCommand : MusicCommandExecutor(true, true, true) {
     override fun execute(context: Context, label: String, args: Array<String>, manager: MusicManager) {
         val toIndex = args.firstOrNull()?.toIntOrNull()?.takeIf { it > 0 && it <= manager.scheduler.queue.size }
-            ?: return context.send().info("You need to specify the position of the track in the queue that you want to skip to.").queue()
+            ?: return context.send().info("再生予定の曲から番号を指定してスキップする必要があります。").queue()
 
         if (toIndex - 1 == 0) {
-            return context.send().info("Use the `${context.bot.configuration.prefix}skip` command to skip single tracks.").queue()
+            return context.send().info("`${context.bot.configuration.prefix}skip` を使用すると現在再生中の曲をスキップできます。").queue()
         }
 
         for (i in 0 until toIndex - 1) {
@@ -28,6 +28,6 @@ class SkipToCommand : MusicCommandExecutor(true, true, true) {
         }
 
         manager.scheduler.nextTrack()
-        context.send().info("Skipped **${toIndex - 1}** tracks.").queue()
+        context.send().info("**${toIndex - 1}** の曲をスキップします。").queue()
     }
 }

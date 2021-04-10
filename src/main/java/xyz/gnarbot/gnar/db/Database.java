@@ -27,7 +27,7 @@ public class Database {
     private RedissonClient redisson;
 
     public Database(String name) {
-        config.useSingleServer().setAddress("redis://192.168.0.140:6379");
+        config.useSingleServer().setAddress("redis://127.0.0.1:6379");
         redisson = Redisson.create(config);
 
         Connection conn = null;

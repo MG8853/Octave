@@ -18,12 +18,12 @@ import xyz.gnarbot.gnar.music.MusicManager
 class ShuffleCommand : MusicCommandExecutor(true, false, true) {
     override fun execute(context: Context, label: String, args: Array<String>, manager: MusicManager) {
         if (manager.scheduler.queue.isEmpty()) {
-            context.send().issue("The queue is empty.\n$PLAY_MESSAGE").queue()
+            context.send().issue("再生予定の曲はありません。\n$PLAY_MESSAGE").queue()
             return
         }
 
         manager.scheduler.shuffle()
 
-        context.send().info("Player has been shuffled").queue()
+        context.send().info("再生予定の曲をシャッフルしました。").queue()
     }
 }

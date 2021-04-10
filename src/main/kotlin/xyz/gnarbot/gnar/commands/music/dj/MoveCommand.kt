@@ -6,8 +6,8 @@ import xyz.gnarbot.gnar.commands.template.parser.Parsers
 import xyz.gnarbot.gnar.music.MusicManager
 
 @Command(
-        aliases = ["move"],
-        description = "Move the bot to another channel."
+        aliases = ["move", "summon"],
+        description = "ボットを別のボイスチャンネルに移動します。"
 )
 @BotInfo(
         id = 77,
@@ -25,18 +25,18 @@ class MoveCommand : MusicCommandExecutor(false, false, true) {
         }
 
         if (targetChannel == null) {
-            context.send().error("That's not a valid music channel.").queue()
+            context.send().error("音声チャンネルが見つかりませんでした。").queue()
             return
         }
 
         if (targetChannel == context.selfMember.voiceState?.channel) {
-            context.send().error("That's the same channel.").queue()
+            context.send().error("その音声チャンネルは今いる音声チャンネルです。").queue()
             return
         }
 
         if (context.data.music.channels.isNotEmpty()) {
             if (targetChannel.id !in context.data.music.channels) {
-                context.send().error("Can not join `${targetChannel.name}`, it isn't one of the designated music channels.").queue()
+                context.send().error("`${targetChannel.name}`の音声チャンネルに入れません。").queue()
                 return
             }
         }

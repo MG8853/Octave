@@ -5,7 +5,7 @@ import xyz.gnarbot.gnar.Bot
 import java.util.regex.Pattern
 
 private val prefix = Bot.getInstance().configuration.prefix
-internal val PLAY_MESSAGE = "\uD83C\uDFB6 `${prefix}play (song/url)` in a voice channel to start playing some music!"
+internal val PLAY_MESSAGE = "\uD83C\uDFB6 `${prefix}play (song/url)` を使用して音声チャンネルにて再生を開始します。"
 
 private val markdownCharacters = "[*_`~]".toRegex()
 val AudioTrackInfo.embedTitle: String get() = markdownCharacters.replace(title) { "\\${it.value}" }

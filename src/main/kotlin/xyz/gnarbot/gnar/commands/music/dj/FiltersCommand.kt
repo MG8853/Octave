@@ -6,7 +6,7 @@ import xyz.gnarbot.gnar.music.MusicManager
 
 @Command(
     aliases = ["filter", "filters", "fx", "effects"],
-    description = "Apply audio filters to the music such as speed and pitch"
+    description = "速度やピッチなどのオーディオフィルターを音楽に適用します。"
 )
 @BotInfo(
     id = 666,
@@ -25,9 +25,9 @@ class FiltersCommand : MusicCommandExecutor(true, true, true) {
 
     override fun execute(context: Context, label: String, args: Array<String>, manager: MusicManager) {
         val filter = args.firstOrNull()
-            ?: return context.send().info("Invalid filter. Pick one of $filterString\n" +
-                "- or `status` to view filter status.\n" +
-                "- or `clear` to disable all filters.").queue()
+            ?: return context.send().info("そのフィルターはありません。 $filterString のいずれかを記入してください。\n" +
+                "- `status` を記入すると現在の設定を表示します。\n" +
+                "- `clear` を記入するとデフォルトの設定へリセットします。").queue()
 
         if (filter == "status") {
             return status(context, manager)
@@ -35,11 +35,13 @@ class FiltersCommand : MusicCommandExecutor(true, true, true) {
 
         if (filter == "clear") {
             manager.dspFilter.clearFilters()
-            return context.send().info("Filters disabled.").queue()
+            return context.send().info("デフォルトへリセットしました。").queue()
         }
 
         filters[filter]?.invoke(context, label, args.drop(1), manager)
-            ?: return context.send().info("Invalid filter. Pick one of $filterString, or `status` to view filter status.").queue()
+            ?: return context.send().info("そのフィルターはありません。 $filterString のいずれかを記入してください。\n" +
+                "- `status` を記入すると現在の設定を表示します。\n" +
+                "- `clear` を記入するとデフォルトの設定へリセットします。").queue()
     }
 
     fun status(ctx: Context, manager: MusicManager) {
@@ -66,7 +68,7 @@ class FiltersCommand : MusicCommandExecutor(true, true, true) {
             "pitch" -> manager.dspFilter.tsPitch = value
             "speed" -> manager.dspFilter.tsSpeed = value
             "rate" -> manager.dspFilter.tsRate = value
-            else -> return ctx.send().info("Invalid choice `${args[0]}`, pick one of `pitch`/`speed`/`rate`.").queue()
+            else -> return ctx.send().info("`${args[0]}` はありません。 `pitch`/`speed`/`rate` のいずれかを記入してください。").queue()
         }
 
         ctx.send().info("Timescale `${args[0].toLowerCase()}` set to `$value`").queue()
@@ -92,7 +94,7 @@ class FiltersCommand : MusicCommandExecutor(true, true, true) {
                 manager.dspFilter.tFrequency = frequency
                 ctx.send().info("Tremolo `frequency` set to `$frequency`").queue()
             }
-            else -> ctx.send().info("Invalid choice `${args[0]}`, pick one of `depth`/`frequency`.").queue()
+            else -> ctx.send().info("`${args[0]}` はありません。 `depth`/`frequency` のいずれかを記入してください。").queue()
         }
     }
 
@@ -112,7 +114,7 @@ class FiltersCommand : MusicCommandExecutor(true, true, true) {
             }
             "band" -> manager.dspFilter.kFilterBand = value
             "width" -> manager.dspFilter.kFilterWidth = value
-            else -> ctx.send().info("Invalid choice `${args[0]}`, pick one of `level`/`band`/`width`.").queue()
+            else -> ctx.send().info("`${args[0]}` はありません。 `level`/`band`/`width` のいずれかを記入してください。").queue()
         }
 
         ctx.send().info("Karaoke `${args[0].toLowerCase()}` set to `$value`").queue()

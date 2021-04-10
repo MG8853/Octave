@@ -8,23 +8,23 @@ abstract class MusicCommandExecutor(private val sameChannel: Boolean, private va
     override fun execute(context: Context, label: String, args: Array<String>) {
         val manager = context.bot.players.getExisting(context.guild)
         if (manager == null) {
-            context.send().issue("There's no music player in this server.\n$PLAY_MESSAGE").queue()
+            context.send().issue("このサーバーには音楽を流すチャンネルがありません。\n$PLAY_MESSAGE").queue()
             return
         }
 
         val botChannel = context.selfMember.voiceState?.channel
         if (botChannel == null && requirePlayer) {
-            context.send().error("The bot is not currently in a voice channel.\n$PLAY_MESSAGE").queue()
+            context.send().error("ボットは、現在ボイスチャンネルにいません。\n$PLAY_MESSAGE").queue()
             return
         }
 
         if (sameChannel && context.voiceChannel != botChannel) {
-            context.send().error("You're not in the same channel as the context.bot.").queue()
+            context.send().error("あなたはこのボットと同じチャンネルにいません。").queue()
             return
         }
 
         if (requirePlayingTrack && manager.player.playingTrack == null) {
-            context.send().error("The player is not playing anything.").queue()
+            context.send().error("なにもしていません。").queue()
             return
         }
 

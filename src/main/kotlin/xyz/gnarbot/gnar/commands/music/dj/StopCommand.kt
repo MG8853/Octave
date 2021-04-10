@@ -6,7 +6,7 @@ import xyz.gnarbot.gnar.music.MusicManager
 
 @Command(
         aliases = ["stop", "leave", "end", "st"],
-        description = "Stop and clear the music player."
+        description = "再生を停止して音声チャンネルから退出します。"
 )
 @BotInfo(
         id = 61,
@@ -23,6 +23,6 @@ class StopCommand : MusicCommandExecutor(false, false, false) {
         context.guild.audioManager.closeAudioConnection()
         context.bot.players.destroy(context.guild.idLong)
 
-        context.send().info("Playback has been completely stopped. If you want to clear the queue run `${context.bot.configuration.prefix}clearqueue` or `${context.bot.configuration.prefix}stop clear`").queue()
+        context.send().info("再生を停止しました。再生予定の曲を削除するには `${context.bot.configuration.prefix}clearqueue` 又は `${context.bot.configuration.prefix}stop clear` を実行してください。").queue()
     }
 }

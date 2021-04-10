@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 
 @Command(
         aliases = ["nowplaying", "np", "playing"],
-        description = "Shows what's currently playing."
+        description = "現在再生中の曲を表示します。"
 )
 @BotInfo(
         id = 67,
@@ -93,7 +93,7 @@ class NowPlayingCommand : MusicCommandExecutor(false, true, true) {
                 }
             }
 
-            footer { "Use ${config.prefix}lyrics current to see the lyrics of the song!" }
+            footer { "${config.prefix}lyrics を使用して曲の歌詞を検索することもできます。" }
         }.action().queue()
     }
 }

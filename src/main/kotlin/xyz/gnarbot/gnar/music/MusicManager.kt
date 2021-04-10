@@ -113,12 +113,12 @@ class MusicManager(val bot: Bot, val guildId: String, val playerRegistry: Player
     fun openAudioConnection(channel: VoiceChannel, context: Context): Boolean {
         when {
             !bot.configuration.musicEnabled -> {
-                context.send().error("Music is disabled.").queue()
+                context.send().error("音楽が無効になっています。").queue()
                 playerRegistry.destroy(guild)
                 return false
             }
             !guild?.selfMember!!.hasPermission(channel, Permission.VOICE_CONNECT) -> {
-                context.send().issue("The bot can't connect to this channel due to a lack of permission.").queue()
+                context.send().issue("権限がないため、ボットはこのチャンネルに接続できません。").queue()
                 playerRegistry.destroy(guild)
                 return false
             }
@@ -126,7 +126,7 @@ class MusicManager(val bot: Bot, val guildId: String, val playerRegistry: Player
             channel.userLimit != 0
                     && guild?.selfMember!!.hasPermission(channel, Permission.VOICE_MOVE_OTHERS)
                     && channel.members.size >= channel.userLimit -> {
-                context.send().issue("The bot can't join due to the user limit.").queue()
+                context.send().issue("ユーザー制限のため、ボットは参加できません。").queue()
                 playerRegistry.destroy(guild)
                 return false
             }
@@ -136,8 +136,8 @@ class MusicManager(val bot: Bot, val guildId: String, val playerRegistry: Player
                     sendingHandler = sendHandler
                 }
 
-                context.send().embed("Music Playback") {
-                    desc { "Joining channel `${channel.name}`." }
+                context.send().embed("音楽を再生") {
+                    desc { "`${channel.name}` チャンネルに参加します。" }
                 }.action().queue()
                 return true
             }
@@ -147,11 +147,11 @@ class MusicManager(val bot: Bot, val guildId: String, val playerRegistry: Player
     fun moveAudioConnection(channel: VoiceChannel) {
         guild?.let {
             if (!it.selfMember.voiceState!!.inVoiceChannel()) {
-                throw IllegalStateException("Bot is not in a voice channel")
+                throw IllegalStateException("ボットは音声チャンネルにいません。")
             }
 
             if (!it.selfMember.hasPermission(channel, Permission.VOICE_CONNECT)) {
-                currentRequestChannel?.respond()?.issue("I don't have permission to join `${channel.name}`.")?.queue()
+                currentRequestChannel?.respond()?.issue("権限がないため `${channel.name}` チャンネルに参加できません。")?.queue()
                 playerRegistry.destroy(it)
                 return
             }
@@ -160,8 +160,8 @@ class MusicManager(val bot: Bot, val guildId: String, val playerRegistry: Player
             it.audioManager.openAudioConnection(channel)
             player.isPaused = false
 
-            currentRequestChannel?.respond()?.embed("Music Playback") {
-                desc { "Moving to channel `${channel.name}`." }
+            currentRequestChannel?.respond()?.embed("音楽を再生") {
+                desc { "`${channel.name}` チャンネルに移動します。" }
             }?.action()?.queue()
         }
     }
@@ -209,7 +209,7 @@ class MusicManager(val bot: Bot, val guildId: String, val playerRegistry: Player
                 }
 
                 if (scheduler.queue.size >= queueLimit) {
-                    context.send().issue("The queue can not exceed $queueLimitDisplay songs.").queue()
+                    context.send().issue("$queueLimitDisplay 曲が最大です。それ以上追加することはできません").queue()
                     return
                 }
 
@@ -247,7 +247,7 @@ class MusicManager(val bot: Bot, val guildId: String, val playerRegistry: Player
                     }
 
                     if (track.duration > durationLimit) {
-                        return context.send().issue("The track can not exceed $durationLimitText.").queue()
+                        return context.send().issue("再生予定の曲は $durationLimitText を超えることはできません。").queue()
                     }
                 }
 
@@ -255,7 +255,7 @@ class MusicManager(val bot: Bot, val guildId: String, val playerRegistry: Player
                 scheduler.queue(track)
 
                 context.send().embed("Music Queue") {
-                    desc { "Added __**[${track.info.embedTitle}](${track.info.embedUri})**__ to queue." }
+                    desc { "再生予定の曲に __**[${track.info.embedTitle}](${track.info.embedUri})**__ を追加しました。" }
                     footer { footnote }
                 }.action().queue()
             }
@@ -277,7 +277,7 @@ class MusicManager(val bot: Bot, val guildId: String, val playerRegistry: Player
 
                 if (!guild?.selfMember!!.voiceState!!.inVoiceChannel()) {
                     if (!context.member.voiceState!!.inVoiceChannel()) {
-                        context.send().issue("You left the channel before the track is loaded.").queue()
+                        context.send().issue("曲が読み込まれる前にチャンネルを離れました。").queue()
 
                         // Track is not supposed to load and the queue is empty
                         // destroy player
@@ -310,9 +310,9 @@ class MusicManager(val bot: Bot, val guildId: String, val playerRegistry: Player
                 context.send().embed("Music Queue") {
                     desc {
                         buildString {
-                            append("Added `$added` tracks to queue from playlist `${playlist.name}`.\n")
+                            append("プレイリスト `${playlist.name}` から `$added` 曲追加しました\n")
                             if (ignored > 0) {
-                                append("Ignored `$ignored` songs as the queue can not exceed `$queueLimitDisplay` songs.")
+                                append("`$queueLimitDisplay` 曲以上を一回で追加することはできません。よって、 `$ignored` 曲を追加しませんでした。")
                             }
                         }
                     }

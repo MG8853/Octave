@@ -6,7 +6,7 @@ import xyz.gnarbot.gnar.music.MusicManager
 
 @Command(
         aliases = ["pause"],
-        description = "Pause or resume the music player."
+        description = "再生中の曲を一時停止または再開します。"
 )
 @BotInfo(
         id = 68,
@@ -21,9 +21,9 @@ class PauseCommand : MusicCommandExecutor(true, true, true) {
         context.send().embed {
             desc {
                 if (manager.player.isPaused) {
-                    "The player has been paused."
+                    "一時停止します。"
                 } else {
-                    "The player has resumed playing."
+                    "再生を再開します。"
                 }
             }
         }.action().queue()

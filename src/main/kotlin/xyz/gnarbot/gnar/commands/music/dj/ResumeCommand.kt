@@ -5,7 +5,7 @@ import xyz.gnarbot.gnar.commands.music.PLAY_MESSAGE
 
 @Command(
         aliases = ["resume"],
-        description = "Resume the music queue."
+        description = "再生予定の曲の再生を再開します。"
 )
 @BotInfo(
         id = 476,
@@ -19,17 +19,17 @@ class ResumeCommand : CommandExecutor() {
         val scheduler = manager.scheduler
 
         if(context.voiceChannel == null) {
-            context.send().error("You need to be in a voice channel.").queue()
+            context.send().error("音声チャンネルにいる必要があります。").queue()
             return
         }
 
         if (scheduler.queue.isEmpty()) {
-            context.send().issue("The queue is empty.\n$PLAY_MESSAGE").queue()
+            context.send().issue("再生予定の曲はありません。\n$PLAY_MESSAGE").queue()
             return
         }
 
         if (scheduler.lastTrack != null) {
-            context.send().error("There's nothing to resume as the player has been active here!").queue()
+            context.send().error("再開するものは何もありません。").queue()
             return
         }
 
@@ -40,6 +40,6 @@ class ResumeCommand : CommandExecutor() {
         manager.openAudioConnection(context.voiceChannel, context)
         scheduler.nextTrack()
 
-        context.send().info("Queue has been resumed.").queue()
+        context.send().info("再開されました。").queue()
     }
 }

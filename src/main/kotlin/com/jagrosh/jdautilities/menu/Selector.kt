@@ -38,9 +38,9 @@ class Selector(waiter: EventWaiter,
                 color { Color.RED }
                 desc {
                     buildString {
-                        append("The bot requires the permission `${Permission.MESSAGE_ADD_REACTION.getName()}`, ")
-                        append("`${Permission.MESSAGE_MANAGE.getName()}` and ")
-                        append("`${Permission.MESSAGE_EMBED_LINKS.getName()}` for selection menus.")
+                        append("ボットに権限がたりません。 `${Permission.MESSAGE_ADD_REACTION.getName()}`, ")
+                        append("`${Permission.MESSAGE_MANAGE.getName()}` と ")
+                        append("`${Permission.MESSAGE_EMBED_LINKS.getName()}` が必要です。")
                     }
                 }
             }.build()).queue()
@@ -59,10 +59,10 @@ class Selector(waiter: EventWaiter,
                 }
             }
 
-            field("Select an Option") {
+            field("オプションを選んで答えてください。") {
                 when (type) {
-                    Type.REACTIONS -> "Pick a reaction corresponding to the options."
-                    Type.MESSAGE -> "Type a number corresponding to the options. ie: `1` or `cancel`"
+                    Type.REACTIONS -> "リアクションをどれか選んでください。"
+                    Type.MESSAGE -> "どれか選んでください数字を送信してください。キャンセルしたい場合は 'cancel' を送信してください。"
                 }
             }
 
@@ -70,7 +70,7 @@ class Selector(waiter: EventWaiter,
                 addField(it)
             }
 
-            setFooter("This selection will time out in $timeout ${unit.toString().toLowerCase()}.", null)
+            setFooter("$timeout ${unit.toString().toLowerCase()} 秒以内に送信してください。それ以降は自動的にキャンセルされます。", null)
         }.build()).queue {
             message = it
             when (type) {

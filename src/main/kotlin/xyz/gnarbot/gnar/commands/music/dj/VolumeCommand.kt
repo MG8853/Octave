@@ -6,8 +6,8 @@ import xyz.gnarbot.gnar.music.MusicManager
 
 @Command(
         aliases = ["volume", "v"],
-        description = "Set the volume of the music player.",
-        usage = "(loudness %)"
+        description = "音量を設定します。",
+        usage = "(1~100 %)"
 )
 @BotInfo(
         id = 74,
@@ -42,7 +42,7 @@ class VolumeCommand : MusicCommandExecutor(false, false, true) {
                     }
                 }
 
-                setFooter("Set the volume by using _${info.aliases[0]} ${info.usage}.", null)
+                setFooter("_${info.aliases[0]} ${info.usage} を使用して音量を設定します。", null)
             }.action().queue()
 
             return
@@ -51,7 +51,7 @@ class VolumeCommand : MusicCommandExecutor(false, false, true) {
         val amount = try {
             args[0].toInt().coerceIn(0, 150)
         } catch (e: NumberFormatException) {
-            context.send().error("Volume must be an integer.").queue()
+            context.send().error("整数でお願いします。").queue()
             return
         }
 
@@ -86,9 +86,9 @@ class VolumeCommand : MusicCommandExecutor(false, false, true) {
 
             footer {
                 if (old == amount) {
-                    "Volume remained the same."
+                    "今の音量と同じです。"
                 } else {
-                    "Volume changed from $old% to $amount%."
+                    "$old% から $amount% へ変更しました。"
                 }
             }
         }.action().queue()

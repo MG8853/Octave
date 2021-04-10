@@ -6,7 +6,7 @@ import xyz.gnarbot.gnar.music.MusicManager
 
 @Command(
     aliases = ["clearqueue", "cq", "cleanqueue", "emptyqueue", "empty"],
-    description = "Skip the current music track."
+    description = "再生予定の曲を削除します。"
 )
 @BotInfo(
     id = 69420,
@@ -20,10 +20,10 @@ class ClearQueueCommand : CommandExecutor() {
         val queue = manager.scheduler.queue
 
         if (queue.isEmpty()) {
-            return context.send().info("There's nothing to clear.").queue()
+            return context.send().info("削除する曲はありません。").queue()
         }
 
         queue.clear()
-        context.send().info("Queue cleared.").queue()
+        context.send().info("再生予定の曲を削除しました。").queue()
     }
 }

@@ -23,9 +23,9 @@ class DiscordFMCommand : CommandExecutor() {
             context.send().embed("Radio") {
                 desc {
                     buildString {
-                        append("Stream random songs from radio stations!\n")
-                        append("Select and stream a station using `${config.prefix}radio (station name)`.\n")
-                        append("Stop streaming songs from a station with `${config.prefix}radio stop`,")
+                        append("ステーションからランダムな曲をストリーミング再生！\n")
+                        append("`${config.prefix}radio (station name)` でステーションを入力してストリーミング再生します。\n")
+                        append("`${config.prefix}radio stop` でステーションからの曲の再生を停止します。")
                     }
                 }
 
@@ -44,12 +44,12 @@ class DiscordFMCommand : CommandExecutor() {
             val manager = context.bot.players.getExisting(context.guild)
 
             if (manager == null) {
-                context.send().error("There's no music player in this guild.\n$PLAY_MESSAGE").queue()
+                context.send().error("再生中ではありません。\n$PLAY_MESSAGE").queue()
                 return
             }
 
             if (manager.discordFMTrack == null) {
-                context.send().error("I'm not streaming random songs from a radio station.").queue()
+                context.send().error("現在ステーションからストリーミング再生をしていません。").queue()
                 return
             }
 
@@ -57,7 +57,7 @@ class DiscordFMCommand : CommandExecutor() {
             manager.discordFMTrack = null
 
             context.send().embed("Radio") {
-                desc { "No longer streaming random songs from the `$station` station." }
+                desc { "`$station` からのストリーミングを停止しました。" }
             }.action().queue()
             return
         }
@@ -72,7 +72,7 @@ class DiscordFMCommand : CommandExecutor() {
         }
 
         if (library == null) {
-            context.send().error("Library $query doesn't exist. Available stations: `${DiscordFM.LIBRARIES!!.contentToString()}`.").queue()
+            context.send().error("$query はありません。 Available stations: `${DiscordFM.LIBRARIES!!.contentToString()}`.").queue()
             return
         }
 

@@ -7,7 +7,7 @@ import xyz.gnarbot.gnar.music.MusicManager
 
 @Command(
         aliases = ["restart", "replay"],
-        description = "Restart the current song."
+        description = "再生予定の曲の再生を再開します。"
 )
 @BotInfo(
         id = 71,
@@ -20,11 +20,11 @@ class RestartCommand : MusicCommandExecutor(true, false, true) {
         val track = manager.player.playingTrack ?: manager.scheduler.lastTrack
 
         if (track != null) {
-            context.send().info("Restarting track: `${track.info.embedTitle}`.").queue()
+            context.send().info("再開　現在の曲: `${track.info.embedTitle}`.").queue()
 
             manager.player.playTrack(track.makeClone())
         } else {
-            context.send().error("No track has been previously started.").queue()
+            context.send().error("再生予定の曲はありません。").queue()
         }
     }
 }

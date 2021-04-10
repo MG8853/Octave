@@ -12,7 +12,7 @@ import java.time.Duration
 @Command(
         aliases = ["jump", "seek"],
         usage = "(time)",
-        description = "Set the time marker of the music playback."
+        description = "再生している曲を指定した時間分 飛ばしたり、戻したりします"
 )
 @BotInfo(
         id = 65,
@@ -23,17 +23,17 @@ import java.time.Duration
 class JumpCommand : MusicCommandExecutor(true, true, true) {
     override fun execute(context: Context, label: String, args: Array<String>, manager: MusicManager) {
         if (!manager.player.playingTrack.isSeekable) {
-            return context.send().issue("The current track doesn't support seeking.").queue()
+            return context.send().issue("現在の曲にこのコマンドを使用することはできません。").queue()
         }
 
         if (args.isEmpty()) {
             return context.send().issue(
-                "You need to specify how many seconds to seek by, or a timestamp.\n" +
-                    "**Examples:**\n" +
-                    "`${context.bot.configuration.prefix}$label 30` (Jump ahead by 30 seconds)\n" +
-                    "`${context.bot.configuration.prefix}$label -30` (Jump back by 30 seconds)\n" +
-                    "`${context.bot.configuration.prefix}$label 02:29` (Jump to exactly 2:29)\n" +
-                    "`${context.bot.configuration.prefix}$label 1m45s` (Jump ahead by 1 minute and 45 seconds)"
+                "飛ばしたり、戻したりするには時間を指定する必要があります。\n" +
+                    "**例:**\n" +
+                    "`${context.bot.configuration.prefix}$label 30` (３０秒飛ばす)\n" +
+                    "`${context.bot.configuration.prefix}$label -30` (３０秒戻す)\n" +
+                    "`${context.bot.configuration.prefix}$label 02:29` (再生時間を 2:29 にする)\n" +
+                    "`${context.bot.configuration.prefix}$label 1m45s` (１分４５秒飛ばす)"
             ).queue()
         }
 
@@ -44,8 +44,8 @@ class JumpCommand : MusicCommandExecutor(true, true, true) {
             ':' in args[0] -> seekByTimestamp(context, manager, args[0])
             args[0].matches(timeFormat) -> seekByTimeShorthand(context, manager, args[0])
             else -> return context.send().issue(
-                "You didn't specify a valid time format!\n" +
-                    "Run the command without arguments to see usage examples."
+                "有効な時間形式を指定していません！\n" +
+                    "引数なしでコマンドを実行して、使用例を確認してください。"
             ).queue()
         }
     }
@@ -70,7 +70,7 @@ class JumpCommand : MusicCommandExecutor(true, true, true) {
                 val (hours, minutes, seconds) = parts
                 (hours * 3600000) + (minutes * 60000) + (seconds * 1000)
             }
-            else -> return ctx.send().issue("You need to format the timestamp as `hours:minutes:seconds` or `minutes:seconds`.").queue()
+            else -> return ctx.send().issue("有効な時間形式を入力してください。 `hours:minutes:seconds` や `minutes:seconds` のようにお願いします。").queue()
         }
 
         val currentTrack = manager.player.playingTrack

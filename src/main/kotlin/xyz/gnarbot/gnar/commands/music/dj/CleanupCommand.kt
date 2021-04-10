@@ -7,7 +7,7 @@ import xyz.gnarbot.gnar.utils.PlaylistUtils.toAudioTrack
 
 @Command(
         aliases = ["cleanup", "cu"],
-        description = "Clear songs based on a specific user, duplicates, or if a user left"
+        description = "特定のユーザー、重複、またはユーザーが離れたかどうかに基づいて再生を予定していた曲を削除します。"
 )
 @BotInfo(
         id = 88,
@@ -17,15 +17,15 @@ import xyz.gnarbot.gnar.utils.PlaylistUtils.toAudioTrack
 class CleanupCommand : CommandExecutor() {
     override fun execute(context: Context, label: String, args: Array<String>) {
         val manager = context.bot.players.getExisting(context.guild)
-            ?: return context.send().issue("There's no music player in this guild.\n$PLAY_MESSAGE").queue()
+            ?: return context.send().issue("再生予定の曲がありません。\n$PLAY_MESSAGE").queue()
 
         if (context.message.mentionedUsers.isEmpty() && args.isEmpty()) {
             return context.send()
                 .issue("`cleanup <left/duplicates/exceeds/@user>`\n\n" +
-                    "`left` - Removes tracks by users no longer in the voice channel\n" +
-                    "`duplicates` - Removes copies of tracks that are already queued\n" +
-                    "`exceeds` - Removes tracks that exceeds the given duration (e.g.: `4:05`)\n" +
-                    "`@user` - Removes all tracks added by the mentioned user")
+                    "`left` - 音声チャンネルからいなくなったユーザーの再生予定だった曲を削除します。\n" +
+                    "`duplicates` - 重複している再生予定の曲を１つにします。\n" +
+                    "`exceeds` - １曲の再生時間が記入された時間以上の場合のその曲を削除します。（例: `4:05`）\n" +
+                    "`@user` - メンションしたユーザーの再生予定だった曲を削除します。")
                 .queue()
         }
 
@@ -59,7 +59,7 @@ class CleanupCommand : CommandExecutor() {
             }
             "exceeds", "longerthan", "duration", "time" -> {
                 val duration = args.getOrNull(1)
-                    ?: return context.send().error("You need to specify a duration. Example: `cleanup exceeds 4:05`").queue()
+                    ?: return context.send().error("時間を追記する必要があります。 例: `cleanup exceeds 4:05`").queue()
 
                 val parts = duration.split(':').mapNotNull { it.toIntOrNull() }
 
@@ -88,16 +88,16 @@ class CleanupCommand : CommandExecutor() {
                         }
                     }
                     else -> {
-                        return context.send().error("The duration needs to be formatted as `00:00`. Examples:\n" +
-                            "`cleanup exceeds 35` - Removes tracks longer than 35 seconds\n" +
-                            "`cleanup exceeds 01:20` - Removes tracks longer than 1 minute and 20 seconds\n" +
-                            "`cleanup exceeds 01:30:00` - Removes tracks longer than 1 hour and 30 minutes.").queue()
+                        return context.send().error("時間は `00:00` のように記入する必要があります。 例:\n" +
+                            "`cleanup exceeds 35` - ３５秒以上の曲を削除\n" +
+                            "`cleanup exceeds 01:20` - １分２０秒以上の曲を削除\n" +
+                            "`cleanup exceeds 01:30:00` - １時間３０分以上の曲を削除").queue()
                     }
                 }
             }
             else -> {
                 val userId = purge.toLongOrNull()
-                    ?: return context.send().issue("You need to mention a user, or pass a user ID.").queue()
+                    ?: return context.send().issue("ユーザーのメンションかIDを記入して指定してください。").queue()
                 val predicate: (String) -> Boolean = {
                     val track = toAudioTrack(it)
                     track.getUserData(TrackContext::class.java)?.requester == userId
@@ -112,28 +112,28 @@ class CleanupCommand : CommandExecutor() {
         when (purge) {
             "left" -> {
                 if (removed == 0) {
-                    return context.send().error("There are no songs to clear.").queue()
+                    return context.send().error("削除する曲はありません。").queue()
                 }
 
-                context.send().info("Removed $removed songs from users no longer in the voice channel.").queue()
+                context.send().info("$removed 曲削除しました。(left)").queue()
             }
             "duplicates", "d", "dupes" -> {
                 if (removed == 0) {
-                    return context.send().error("There were no duplicates.").queue()
+                    return context.send().error("重複はありませんでした。").queue()
                 }
 
-                context.send().info("Removed $removed duplicate songs from the queue.").queue()
+                context.send().info("$removed 曲削除しました。(duplicates)").queue()
             }
             "exceeds", "longerthan", "duration", "time" -> {
                 if (removed == 0) {
-                    return context.send().error("There were no tracks that exceeded the given duration.").queue()
+                    return context.send().error("指定された時間を超える曲はありませんでした。").queue()
                 }
 
-                context.send().info("Removed $removed tracks from the queue.").queue()
+                context.send().info("$removed 曲削除しました。(exceeds)").queue()
             }
             else -> {
                 val user = context.guild.getMemberById(purge)?.user?.name ?: "Unknown User"
-                context.send().info("Removed $removed songs queued by **$user**.").queue()
+                context.send().info("**$user** の再生予定だった曲を削除しました。").queue()
             }
         }
     }

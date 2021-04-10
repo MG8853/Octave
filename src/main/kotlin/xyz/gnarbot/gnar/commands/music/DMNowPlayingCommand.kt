@@ -14,7 +14,7 @@ import xyz.gnarbot.gnar.utils.response.ResponseBuilder
 
 @Command(
         aliases = ["dmnp"],
-        description = "Shows what's currently playing, on your DMs."
+        description = "ダイレクトメッセージにて現在再生されている曲を表示します。"
 )
 @BotInfo(
         id = 567,

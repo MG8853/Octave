@@ -11,7 +11,7 @@ import java.net.URLEncoder
 @Command(
         aliases = ["lyrics"],
         usage = "(current|search <term>)",
-        description = "Look up lyrics of the current playing song or of a song of your choice."
+        description = "曲の歌詞を検索します。"
 )
 @BotInfo(
         id = 193,
@@ -20,13 +20,13 @@ import java.net.URLEncoder
 )
 
 class LyricsCommand : CommandTemplate() {
-    @Description("Lyrics of the current song.")
+    @Description("現在の曲の歌詞　")
     fun current(context: Context) {
         val manager = context.bot.players.getExisting(context.guild)
-            ?: return context.send().info("There's no player to be seen here.").queue()
+            ?: return context.send().info("現在、音楽ボットは再生をしていません。").queue()
 
         val audioTrack = manager.player.playingTrack
-            ?: return context.send().info("There's no song playing currently.").queue()
+            ?: return context.send().info("再生中の曲はありません").queue()
 
         val title = audioTrack.info.title
         sendLyricsFor(context, title)
@@ -45,7 +45,7 @@ class LyricsCommand : CommandTemplate() {
             header("User-Agent", "Octave (DiscordBot, https://github.com/DankMemer/Octave")
         }.thenAccept {
             if (!it.isNull("error")) {
-                return@thenAccept ctx.send().info("No lyrics found for `$title`. Try another song?").queue()
+                return@thenAccept ctx.send().info("`$title` の歌詞は見つかりませんでした。別の曲を試してみてください。").queue()
             }
 
             val lyrics = it.getString("content")
@@ -57,10 +57,10 @@ class LyricsCommand : CommandTemplate() {
 
             ctx.bot.eventWaiter.paginator {
                 setUser(ctx.user)
-                setEmptyMessage("There should be something here 👀")
+                setEmptyMessage("？？？ 👀 ？？？")
                 setItemsPerPage(1)
                 finally { message -> message!!.delete().queue() }
-                title { "Lyrics for $fullTitle" }
+                title { "$fullTitle の歌詞" }
 
                 for (page in pages) {
                     entry { page }

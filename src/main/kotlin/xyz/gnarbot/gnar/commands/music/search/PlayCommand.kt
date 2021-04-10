@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 @Command(
         aliases = ["play", "p"],
         usage = "[url|YT search]",
-        description = "Plays music in a voice channel"
+        description = "音声チャンネルで音楽を再生します"
 )
 @BotInfo(
         id = 62,
@@ -30,15 +30,15 @@ class PlayCommand : CommandExecutor() {
         val userChannel = context.voiceChannel
 
         if (botChannel != null && botChannel != userChannel) {
-            context.send().issue("The bot is already playing music in another channel.").queue()
+            context.send().issue("ボットはすでに別の音声チャンネルで音楽を再生しています。").queue()
             return
         }
         val manager = context.bot.players.getExisting(context.guild)
 
         if (args.isEmpty()) {
             if (manager == null) {
-                context.send().issue("There's no music player in this guild.\n" +
-                        "\uD83C\uDFB6` ${config.prefix}play (song/url)` to start playing some music!").queue()
+                context.send().issue("再生予定の曲はありません。\n" +
+                        "\uD83C\uDFB6` ${config.prefix}play (song/url)` を使用して音楽を追加してください。").queue()
                 return
             }
 
@@ -46,15 +46,15 @@ class PlayCommand : CommandExecutor() {
                 manager.player.isPaused -> {
                     manager.player.isPaused = false
                     context.send().embed("Play Music") {
-                        desc { "Music is no longer paused." }
+                        desc { "再生を再開します。" }
                     }.action().queue()
                 }
                 manager.player.playingTrack != null -> {
-                    context.send().error("Music is already playing. Are you trying to queue a track? Try adding a search term with this command!").queue()
+                    context.send().error("既に音声チャンネルにいます。 音楽を追加したい場合は、 `${config.prefix}play (song/url)` を使用してください。").queue()
                 }
                 manager.scheduler.queue.isEmpty() -> {
                     context.send().embed("Empty Queue") {
-                        desc { "There is no music queued right now. Add some songs with `${config.prefix}play -song|url`." }
+                        desc { "再生予定の曲は現在ありません。 `${config.prefix}play -song|url` を使用して音楽を追加してください。" }
                     }.action().queue()
                 }
             }
@@ -85,14 +85,14 @@ class PlayCommand : CommandExecutor() {
         if(manager == null && !oldQueue.isEmpty()) {
             SelectorBuilder(context.bot.eventWaiter)
                     .setType(Selector.Type.MESSAGE)
-                    .title { "Would you like to keep your old queue?" }
-                    .description { "Thanks for using Octave!" }
-                    .addOption("Yes, keep it.") {
-                        context.send().info("Kept old queue. Playing new song first and continuing with your queue...").queue()
+                    .title { "前回の再生予定だった曲をついでに追加しますか？" }
+                    .description { "" }
+                    .addOption("はい、追加します。") {
+                        context.send().info("前回の再生予定だった曲を追加しました。最初に新しく追加された曲を流します。").queue()
                         future.complete(null)
-                    }.addOption("No, start a new queue.") {
+                    }.addOption("いいえ、削除してください。") {
                         oldQueue.clear()
-                        context.send().info("Scrapped old queue. A new queue will start.")
+                        context.send().info("削除しました。新しく追加された曲を再生します。")
                         future.complete(null)
                     }.build().display(context.textChannel)
         } else {
@@ -124,7 +124,7 @@ class PlayCommand : CommandExecutor() {
                         TrackContext(
                                 context.member.user.idLong,
                                 context.textChannel.idLong
-                        ), "You can search and pick results using ${config.prefix}youtube or ${config.prefix}soundcloud while in a channel.")
+                        ), "`${config.prefix}youtube` や `${config.prefix}soundcloud` を使用して検索することもできます。")
             } else if (isSearchResult) { //As in, it comes from SoundcloudCommand or YoutubeCommand
                 manager.loadAndPlay(
                         context,
@@ -136,7 +136,7 @@ class PlayCommand : CommandExecutor() {
                 )
             } else {
                 if (!context.bot.configuration.searchEnabled) {
-                    context.send().issue("Search is currently disabled. Try direct links instead.").queue()
+                    context.send().issue("現在、検索を利用することはできません。").queue()
                     return
                 }
 
@@ -147,13 +147,13 @@ class PlayCommand : CommandExecutor() {
                         TrackContext(
                                 context.member.user.idLong,
                                 context.textChannel.idLong
-                        ), "You can search and pick results using ${config.prefix}youtube or ${config.prefix}soundcloud while in a channel.")
+                        ), "`${config.prefix}youtube` や `${config.prefix}soundcloud` を使用して検索することもできます。")
             }
         }
 
         fun startPlayVote(context: Context, manager: MusicManager, args: Array<String>, isSearchResult: Boolean, uri: String) {
             if (manager.isVotingToPlay) {
-                context.send().issue("There is already a vote going on!").queue()
+                context.send().issue("すでに投票が行われています！").queue()
                 return
             }
 
@@ -164,7 +164,7 @@ class PlayCommand : CommandExecutor() {
             }
 
             if (System.currentTimeMillis() - manager.lastPlayVoteTime < voteSkipCooldown) {
-                context.send().issue("You must wait $voteSkipCooldown before starting a new vote.").queue()
+                context.send().issue("新しく投票を始めるには $voteSkipCooldown 待つ必要があります。").queue()
                 return
             }
 
@@ -188,9 +188,9 @@ class PlayCommand : CommandExecutor() {
                 desc {
                     buildString {
                         append(context.message.author.asMention)
-                        append(" has voted to **play** the current track!")
-                        append(" React with :thumbsup: or :thumbsdown:\n")
-                        append("Whichever has the most votes in $votePlayDurationText will win! This requires at least $halfPeople on the VC to vote to skip.")
+                        append(" が投票しました。")
+                        append(" :thumbsup: か :thumbsdown: のどちらかに票を入れてください。\n")
+                        append("$votePlayDurationText で最も多くの票があったほうが結果となります。 これには、音声チャンネルに $halfPeople いる必要があります。")
                     }
                 }
             }.action()
@@ -204,7 +204,7 @@ class PlayCommand : CommandExecutor() {
                     .thenCompose {
                         it.editMessage(EmbedBuilder(it.embeds[0])
                                 .apply {
-                                    desc { "Voting has ended! Check the newer messages for results." }
+                                    desc { "投票は終了しました！ 結果を確認してください。" }
                                     clearFields()
                                 }.build()
                         ).submitAfter(voteSkipDuration, TimeUnit.MILLISECONDS)
@@ -216,10 +216,10 @@ class PlayCommand : CommandExecutor() {
                             desc {
                                 buildString {
                                     if (skip > halfPeople) {
-                                        appendln("The vote has passed! The song will be queued.")
+                                        appendln("投票が完了しました。曲は後ほど再生されます。")
                                         play(context, args, isSearchResult, uri)
                                     } else {
-                                        appendln("The vote has failed! The song will not be queued.")
+                                        appendln("投票は失敗に終わりました。")
                                     }
                                 }
                             }
