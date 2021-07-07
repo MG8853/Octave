@@ -20,9 +20,7 @@ repositories {
     maven { url 'https://jitpack.io' }
     maven { url 'https://dl.bintray.com/natanbc/maven' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    maven {
-        url 'https://dl.bintray.com/sedmelluq/com.sedmelluq'
-    }
+    maven { url 'https://m2.dv8tion.net/releases' }
 }
 
 dependencies {
