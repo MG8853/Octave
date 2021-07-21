@@ -26,6 +26,7 @@ package gg.octave.bot.commands.settings
 
 import gg.octave.bot.Launcher
 import gg.octave.bot.db.guilds.GuildData
+import gg.octave.bot.entities.framework.HelpGroup
 import gg.octave.bot.entities.framework.Usages
 import gg.octave.bot.utils.extensions.*
 import gg.octave.bot.utils.getDisplayValue
@@ -48,7 +49,8 @@ class Settings : Cog {
         description = "Change music settings.", userPermissions = [Permission.MANAGE_SERVER])
     fun settings(ctx: Context) = DEFAULT_SUBCOMMAND(ctx)
 
-    @SubCommand(aliases = ["view", "list"])
+    @HelpGroup("General")
+    @SubCommand(aliases = ["view", "list"], description = "Provides an overview of the server's Octave settings.")
     fun show(ctx: Context) {
         val data = ctx.data
 
@@ -103,6 +105,7 @@ class Settings : Cog {
         }
     }
 
+    @HelpGroup("General")
     @SubCommand(description = "Resets the settings for the guild.")
     fun reset(ctx: Context) {
         ctx.data.apply { reset(); save() }
@@ -113,6 +116,7 @@ class Settings : Cog {
         }
     }
 
+    @HelpGroup("General")
     @SubCommand(aliases = ["autodel"], description = "Toggle whether the bot auto-deletes its responses.")
     fun autodelete(ctx: Context, toggle: Boolean) {
         ctx.data.let {
@@ -126,6 +130,7 @@ class Settings : Cog {
         ctx.send(send)
     }
 
+    @HelpGroup("General")
     @SubCommand(aliases = ["ta", "announce"], description = "Toggles music announcements.")
     fun announcements(ctx: Context, toggle: Boolean) {
         ctx.data.let {
@@ -137,6 +142,7 @@ class Settings : Cog {
         ctx.send(send)
     }
 
+    @HelpGroup("DJ")
     @SubCommand(description = "Toggles whether only DJs can use the bot.")
     fun djonly(ctx: Context, toggle: Boolean) {
         ctx.data.let {
@@ -148,6 +154,7 @@ class Settings : Cog {
         ctx.send(send)
     }
 
+    @HelpGroup("DJ")
     @SubCommand(aliases = ["djrequirement", "rdj"], description = "Set whether DJ-only commands can be used by all.")
     fun requiredj(ctx: Context, toggle: Boolean) { // toggle = false (no)
         ctx.data.let {
@@ -159,6 +166,7 @@ class Settings : Cog {
         ctx.send(send)
     }
 
+    @HelpGroup("Voting")
     @SubCommand(aliases = ["votequeue", "vp", "vq"], description = "Toggle whether voting is enabled for track queueing.")
     fun voteplay(ctx: Context, toggle: Boolean) {
         ctx.data.let {
@@ -170,6 +178,7 @@ class Settings : Cog {
         ctx.send(send)
     }
 
+    @HelpGroup("Limitations")
     @SubCommand(aliases = ["vc"], description = "Toggles a voice-channel as a dedicated music channel.")
     fun voicechannel(ctx: Context, @Greedy channel: VoiceChannel) {
         val data = ctx.data
@@ -189,6 +198,7 @@ class Settings : Cog {
         ctx.send("`${channel.name}` is now a designated music channel.")
     }
 
+    @HelpGroup("General")
     @SubCommand(aliases = ["ac"], description = "Set the music announcement channel. Omit to reset.")
     fun announcementchannel(ctx: Context, @Greedy textChannel: TextChannel?) {
         ctx.data.let {
@@ -202,6 +212,7 @@ class Settings : Cog {
         ctx.send(out)
     }
 
+    @HelpGroup("DJ")
     @SubCommand(aliases = ["djr", "dr"], description = "Sets the DJ role. Omit to reset.")
     fun djrole(ctx: Context, @Greedy role: Role?) {
         ctx.data.let {
@@ -215,6 +226,7 @@ class Settings : Cog {
         ctx.send(out)
     }
 
+    @HelpGroup("DJ")
     @SubCommand(aliases = ["djra", "dra"], description = "Adds extra DJ roles.")
     fun djrolesadd(ctx: Context, @Greedy role: Role) {
         val data = ctx.data
@@ -228,6 +240,7 @@ class Settings : Cog {
         data.save()
     }
 
+    @HelpGroup("DJ")
     @SubCommand(aliases = ["djrm"], description = "Removes extra DJ roles.")
     fun djrolesremove(ctx: Context, @Greedy role: Role) {
         val data = ctx.data
@@ -241,6 +254,7 @@ class Settings : Cog {
         ctx.send("`${role.name}` is no longer a DJ role.")
     }
 
+    @HelpGroup("DJ")
     @SubCommand(aliases = ["djrl", "drl"], description = "Lists all of the extra DJ roles you've set")
     fun djroleslist(ctx: Context) {
         val data = ctx.data
@@ -258,6 +272,7 @@ class Settings : Cog {
         }
     }
 
+    @HelpGroup("Limitations")
     @SubCommand(aliases = ["sl"], description = "Set the maximum song length. \"reset\" to reset.")
     @Usages("20m")
     fun songlength(ctx: Context, @Greedy duration: Duration?) {
@@ -285,6 +300,7 @@ class Settings : Cog {
         ctx.send("Successfully set song length limit to ${duration.toHuman()}.")
     }
 
+    @HelpGroup("Limitations")
     @SubCommand(aliases = ["qs"], description = "Sets the maximum queue size for the server. Omit to reset.")
     fun queuesize(ctx: Context, limit: Int?) {
         val data = ctx.data
@@ -308,6 +324,7 @@ class Settings : Cog {
         ctx.send("Successfully set queue limit to $qLimit.")
     }
 
+    @HelpGroup("General")
     @SubCommand(description = "Sets the auto-delete delay.")
     @Usages("20m")
     fun autodeletedelay(ctx: Context, duration: Duration?) {
@@ -331,7 +348,8 @@ class Settings : Cog {
         ctx.send("Set auto-delete delay to ${getDisplayValue(timeMillis)}.")
     }
 
-    @SubCommand(description = "Sets whether the command invocation will be deleted after the command is sent.")
+    @HelpGroup("General")
+    @SubCommand(description = "Toggle deletion of the command trigger messages.")
     fun invokedelete(ctx: Context, toggle: Boolean) {
         if (!ctx.selfMember!!.hasPermission(Permission.MESSAGE_MANAGE)) {
             return ctx.send("I don't have permission to delete messages.")
@@ -345,6 +363,7 @@ class Settings : Cog {
         ctx.send(send)
     }
 
+    @HelpGroup("General")
     @SubCommand(description = "Enable/Disable 24/7 mode. Premium Guilds only.")
     fun alldaymusic(ctx: Context, toggle: Boolean) {
         val data = ctx.data
@@ -360,21 +379,25 @@ class Settings : Cog {
         ctx.send(send)
     }
 
+    @HelpGroup("Voting")
     @SubCommand(aliases = ["votequeuecooldown", "vqc", "vpc"], description = "Sets the vote-play cooldown.")
     @Usages("15s", "reset")
     fun voteplaycooldown(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,
         { music.votePlayCooldown = it }, ctx.config.votePlayCooldown, ctx.config.votePlayCooldownText, "vote-play cooldown")
 
+    @HelpGroup("Voting")
     @SubCommand(aliases = ["votequeueduration", "vqd", "vpd"], description = "Sets the vote-play duration.")
     @Usages("15s", "reset")
     fun voteplayduration(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,
         { music.votePlayDuration = it }, ctx.config.votePlayDuration, ctx.config.votePlayDurationText, "vote-play duration")
 
+    @HelpGroup("Voting")
     @SubCommand(aliases = ["vsd"], description = "Sets the vote-skip duration.")
     @Usages("15s", "reset")
     fun voteskipduration(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,
         { music.voteSkipDuration = it }, ctx.config.voteSkipDuration, ctx.config.voteSkipDurationText, "vote-skip duration")
 
+    @HelpGroup("Voting")
     @SubCommand(aliases = ["vsc"], description = "Sets the vote-skip cooldown.")
     @Usages("15s", "reset")
     fun voteskipcooldown(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,

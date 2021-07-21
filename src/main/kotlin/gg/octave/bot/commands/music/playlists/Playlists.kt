@@ -72,7 +72,7 @@ class Playlists : Cog {
             setFooter("Showing $showing of $total playlists • Page $currentPage • Specify a page to go to.")
         }
 
-        // TODO: Introduce way of resigning as collaborator/prevent re-assignment?
+        // TODO: Introduce way of preventing re-assignment as collaborator?
         // TODO: Collaboration limit?
         // TODO: Implement HelpGroups
     }
@@ -120,7 +120,7 @@ class Playlists : Cog {
     }
 
     @HelpGroup("Management")
-    @SubCommand(aliases = ["manage", "modify"], description = "Edit an existing playlist (move/remove/...)")
+    @SubCommand(aliases = ["manage", "modify"], description = "Edit an existing playlist (move/remove/...).")
     fun edit(ctx: Context, @Greedy name: String) {
         val existingPlaylist = ctx.db.findCustomPlaylist(ctx.author.id, name, true)
             ?: return ctx.send("No playlists found belonging to you with that name/ID, or that you collaborate on.")
@@ -351,6 +351,23 @@ class Playlists : Cog {
             setColor(OctaveBot.PRIMARY_COLOUR)
             setTitle("Collaborator $action")
             setDescription("The user **<@$targetUser>** has been ${action.toLowerCase()} as a playlist collaborator.")
+        }
+    }
+
+    @HelpGroup("Collaboration")
+    @SubCommand(aliases = ["resign"], description = "Resign as collaborator from a playlist.")
+    fun leave(ctx: Context, playlistName: String) {
+        val existingPlaylist = ctx.db.getCollaboratorPlaylistsAsList(ctx.author.id)
+            .firstOrNull { it.id == playlistName || it.name == playlistName }
+            ?: return ctx.send("No playlists found with the given name, that you collaborate on.")
+
+        existingPlaylist.collaboratorIds.remove(ctx.author.id)
+        existingPlaylist.save()
+
+        ctx.send {
+            setColor(OctaveBot.PRIMARY_COLOUR)
+            setTitle("Collaborator Resignation")
+            setDescription("You are no longer a collaborator for the playlist **${existingPlaylist.name}**.")
         }
     }
 

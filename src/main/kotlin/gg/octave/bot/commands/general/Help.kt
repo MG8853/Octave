@@ -24,6 +24,8 @@
 
 package gg.octave.bot.commands.general
 
+import gg.octave.bot.entities.framework.HelpGroup
+import gg.octave.bot.utils.OctaveBot
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.data
 import gg.octave.bot.utils.extensions.generateExampleUsage
@@ -32,6 +34,7 @@ import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.SubCommandFunction
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.entities.Cog
+import kotlin.reflect.full.findAnnotation
 
 class Help : Cog {
     private val categoryAlias = mapOf("Search" to "Music", "Dj" to "Music")
@@ -115,9 +118,19 @@ class Help : Cog {
             setDescription(description)
 
             val padEnd = command.subcommands.values.maxByOrNull { it.name.length }?.name?.length ?: 15
-            val subcommands = (subcomms ?: command.subcommands.values.toSet()).joinToString("\n") {
-                "`${it.name.padEnd(padEnd, ' ')}:` ${it.properties.description}"
-            }.takeIf { it.isNotEmpty() } ?: "*None.*"
+            val subcommands = (subcomms ?: command.subcommands.values.toSet())
+                .groupBy { it.method.findAnnotation<HelpGroup>()?.name }
+                .map { (category, cmds) ->
+                    buildString {
+                        category?.let { appendLine("__**[$category](${OctaveBot.WEBSITE_LINK})**__") }
+                        for (cmd in cmds.sortedBy { it.name }) {
+                            appendLine("`${cmd.name.padEnd(padEnd, ' ')}:` ${cmd.properties.description}")
+                        }
+                    }
+                }
+                .joinToString("\n")
+                .takeIf { it.isNotEmpty() }
+                ?: "*None.*"
 
             if (subcommands.length > 1024) {
                 appendDescription("\n**Subcommands:**\n$subcommands")
