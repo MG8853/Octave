@@ -74,7 +74,7 @@ class Playlists : Cog {
 
         // TODO: Introduce way of preventing re-assignment as collaborator?
         // TODO: Collaboration limit?
-        // TODO: Implement HelpGroups
+        // TODO: Collaboration edit log? Maybe some form of version control?
     }
 
     @HelpGroup("Management")
@@ -304,7 +304,7 @@ class Playlists : Cog {
     }
 
     @HelpGroup("Collaboration")
-    @SubCommand(aliases = ["collaborate", "col", "c"], description = "Add/remove users to playlists.")
+    @SubCommand(aliases = ["collaborate", "col", "c"], description = "Add/remove collaborators to playlists.")
     fun collab(ctx: Context, playlistName: String, @Greedy userOrId: UserOrId?) {
         val playlist = ctx.db.findCustomPlaylist(ctx.author.id, playlistName)
             ?: return ctx.send("You don't have any playlists with that name.")
@@ -339,11 +339,21 @@ class Playlists : Cog {
             return ctx.send { // Only accept ADDING users via mentions to prevent invalid users from being added.
                 setColor(OctaveBot.PRIMARY_COLOUR)
                 setTitle("Unknown User")
-                setDescription("You must mention the user that you want to add as a playlist collaborator.")
+                setDescription("You must mention the user that you want to add/remove as a playlist collaborator.")
             }
         }
 
         val userAdded = playlist.collaboratorIds.toggle(targetUser)
+
+        if (userAdded && playlist.collaboratorIds.size > 5) {
+            return ctx.send {
+                setColor(OctaveBot.PRIMARY_COLOUR)
+                setTitle("Collaborator Limit Reached")
+                setDescription("Playlists can only have up to 5 collaborators assigned at any given time.\n" +
+                    "Consider removing some to free up room for new collaborators.")
+            }
+        }
+
         val action = if (userAdded) "Added" else "Removed"
         playlist.save()
         
