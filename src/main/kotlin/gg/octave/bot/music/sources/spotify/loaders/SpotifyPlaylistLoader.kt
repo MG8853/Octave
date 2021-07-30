@@ -42,10 +42,6 @@ class SpotifyPlaylistLoader : Loader {
         val playlistTracks = fetchPlaylistTracks(manager, sourceManager, playlistId)
         val playlistName = playlistInfo.optString("name", "Untitled Playlist")
 
-        if (playlistTracks.isEmpty()) {
-            return null
-        }
-
         return BasicAudioPlaylist(playlistName, playlistTracks, null, false)
     }
 
@@ -71,7 +67,6 @@ class SpotifyPlaylistLoader : Loader {
             val json = JSONObject(content)
 
             if (!json.has("items")) {
-                println("No items")
                 return emptyList()
             }
 
@@ -105,11 +100,6 @@ class SpotifyPlaylistLoader : Loader {
             try {
                 CompletableFuture.allOf(*tasks.toTypedArray()).get()
             } catch (ignored: Exception) {
-            }
-
-            tasks.firstOrNull { t -> t.isCompletedExceptionally }?.exceptionally {
-                it.printStackTrace()
-                return@exceptionally null
             }
 
             tasks.filterNot { t -> t.isCompletedExceptionally }
