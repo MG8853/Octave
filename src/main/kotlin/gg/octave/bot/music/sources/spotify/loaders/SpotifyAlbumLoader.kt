@@ -68,15 +68,23 @@ class SpotifyAlbumLoader : Loader {
 
     private fun fetchAlbumTracks(manager: AudioPlayerManager,
                                  sourceManager: SpotifyAudioSourceManager, jsonTracks: JSONArray): List<AudioTrack> {
-        val tasks = mutableListOf<CompletableFuture<AudioTrack>>()
+        val tasks = mutableListOf<CompletableFuture<AudioTrack?>>()
 
         for (jTrack in jsonTracks) {
             val track = (jTrack as JSONObject)
             val title = track.getString("name")
             val artist = track.getJSONArray("artists").getJSONObject(0).getString("name")
 
-            val task = sourceManager.queueYoutubeSearch(manager, "ytmsearch:$title $artist")
-                .thenApply { ai -> if (ai is AudioPlaylist) ai.tracks.first() else ai as AudioTrack }
+            val task = sourceManager.queueYoutubeSearch(manager, "$title $artist")
+                .thenApply { ai ->
+                    when (ai) {
+                        is AudioPlaylist -> ai.tracks.first()
+                        is AudioTrack -> ai
+                        else -> ai?.let {
+                            throw IllegalStateException("Spotify track lookup did not yield an appropriate result: ${ai::class.java.simpleName}")
+                        }
+                    }
+                }
             tasks.add(task)
         }
 

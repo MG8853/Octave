@@ -42,7 +42,7 @@ class SpotifyTrackLoader : Loader {
         val trackArtist = if (trackArtists.isEmpty) "" else trackArtists.getJSONObject(0).getString("name")
         val trackTitle = spotifyTrack.getString("name")
 
-        return sourceManager.doYoutubeSearch(manager, "ytmsearch:$trackArtist $trackTitle")
+        return sourceManager.doYoutubeSearch(manager, "$trackArtist $trackTitle")
     }
 
     private fun fetchTrackInfo(sourceManager: SpotifyAudioSourceManager, trackId: String): JSONObject {

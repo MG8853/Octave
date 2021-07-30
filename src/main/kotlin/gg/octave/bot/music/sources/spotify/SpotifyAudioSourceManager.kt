@@ -102,7 +102,7 @@ class SpotifyAudioSourceManager(
     }
 
     internal fun queueYoutubeSearch(manager: AudioPlayerManager, identifier: String): CompletableFuture<AudioItem?> {
-        return CompletableFuture.supplyAsync(Supplier { doYoutubeSearch(manager, identifier) }, trackLoaderPool)
+        return CompletableFuture.supplyAsync({ doYoutubeSearch(manager, "ytsearch:$identifier") }, trackLoaderPool)
     }
 
     /**

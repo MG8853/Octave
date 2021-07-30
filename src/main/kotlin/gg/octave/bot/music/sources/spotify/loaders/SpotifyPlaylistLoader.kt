@@ -25,10 +25,7 @@
 package gg.octave.bot.music.sources.spotify.loaders
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager
-import com.sedmelluq.discord.lavaplayer.track.AudioItem
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack
-import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist
+import com.sedmelluq.discord.lavaplayer.track.*
 import gg.octave.bot.music.sources.spotify.SpotifyAudioSourceManager
 import org.apache.http.HttpStatus
 import org.apache.http.util.EntityUtils
@@ -39,11 +36,15 @@ import java.util.regex.Matcher
 class SpotifyPlaylistLoader : Loader {
     override fun pattern() = PLAYLIST_PATTERN
 
-    override fun load(manager: AudioPlayerManager, sourceManager: SpotifyAudioSourceManager, matcher: Matcher): AudioItem {
+    override fun load(manager: AudioPlayerManager, sourceManager: SpotifyAudioSourceManager, matcher: Matcher): AudioItem? {
         val playlistId = matcher.group(2)
         val playlistInfo = fetchPlaylistInfo(sourceManager, playlistId)
         val playlistTracks = fetchPlaylistTracks(manager, sourceManager, playlistId)
         val playlistName = playlistInfo.optString("name", "Untitled Playlist")
+
+        if (playlistTracks.isEmpty()) {
+            return null
+        }
 
         return BasicAudioPlaylist(playlistName, playlistTracks, null, false)
     }
@@ -70,11 +71,12 @@ class SpotifyPlaylistLoader : Loader {
             val json = JSONObject(content)
 
             if (!json.has("items")) {
+                println("No items")
                 return emptyList()
             }
 
             val jsonTracks = json.getJSONArray("items")
-            val tasks = mutableListOf<CompletableFuture<AudioTrack>>()
+            val tasks = mutableListOf<CompletableFuture<AudioTrack?>>()
 
             for (jTrack in jsonTracks) {
                 val trackJ = jTrack as JSONObject
@@ -87,14 +89,27 @@ class SpotifyPlaylistLoader : Loader {
                 val title = track.getString("name")
                 val artist = track.getJSONArray("artists").getJSONObject(0).getString("name")
 
-                val task = sourceManager.queueYoutubeSearch(manager, "ytmsearch:$title $artist")
-                    .thenApply { ai -> if (ai is AudioPlaylist) ai.tracks.first() else ai as AudioTrack }
+                val task = sourceManager.queueYoutubeSearch(manager, "$title $artist")
+                    .thenApply { ai ->
+                        when (ai) {
+                            is AudioPlaylist -> ai.tracks.first()
+                            is AudioTrack -> ai
+                            else -> ai?.let {
+                                throw IllegalStateException("Spotify track lookup did not yield an appropriate result: ${ai::class.java.simpleName}")
+                            }
+                        }
+                    }
                 tasks.add(task)
             }
 
             try {
                 CompletableFuture.allOf(*tasks.toTypedArray()).get()
             } catch (ignored: Exception) {
+            }
+
+            tasks.firstOrNull { t -> t.isCompletedExceptionally }?.exceptionally {
+                it.printStackTrace()
+                return@exceptionally null
             }
 
             tasks.filterNot { t -> t.isCompletedExceptionally }
