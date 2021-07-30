@@ -98,11 +98,11 @@ class SpotifyAudioSourceManager(
     }
 
     internal fun doYoutubeSearch(manager: AudioPlayerManager, identifier: String): AudioItem? {
-        return youtubeAudioSourceManager.loadItem(manager, AudioReference(identifier, null))
+        return youtubeAudioSourceManager.loadItem(manager, AudioReference("ytsearch:$identifier", null))
     }
 
     internal fun queueYoutubeSearch(manager: AudioPlayerManager, identifier: String): CompletableFuture<AudioItem?> {
-        return CompletableFuture.supplyAsync({ doYoutubeSearch(manager, "ytsearch:$identifier") }, trackLoaderPool)
+        return CompletableFuture.supplyAsync({ doYoutubeSearch(manager, identifier) }, trackLoaderPool)
     }
 
     /**
