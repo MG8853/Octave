@@ -54,9 +54,10 @@ class Configuration(file: File) {
 
     val sentryDsn: String = config["bot", "sentry"].getString(null)
     val bucketFactor: Int = config["bot", "bucketFactor"].getInt(8)
-    val nodeNumber: Int = System.getProperty("node").toInt()
-    val nodeTotal: Int = System.getProperty("nodeCount").toInt()
-    //val nodeNumber: Int = config["bot", "node"].getInt(0)
+    //val nodeNumber: Int = System.getProperty("node").toInt()
+    //val nodeTotal: Int = System.getProperty("nodeCount").toInt()
+    val nodeNumber: Int = config["bot", "node"].getInt(0)
+    val nodeTotal: Int = config["bot", "nodeCount"].getInt(0)
 
     // +--------------+
     // Music Settings

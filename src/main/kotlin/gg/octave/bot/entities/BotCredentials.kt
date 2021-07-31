@@ -37,7 +37,8 @@ class BotCredentials(file: File) {
     val token = config["token"].string.takeIf { !it.isNullOrBlank() }
         ?: error("Bot token can't be null or blank.")
 
-    val totalShards = System.getProperty("shardCount").toInt()
+    //val totalShards = System.getProperty("shardCount").toInt()
+    val totalShards = config["shardCount"].string.toInt()
     private val totalNodes = Launcher.configuration.nodeTotal
     private val shardsPerInstance = totalShards / totalNodes
 
